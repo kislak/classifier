@@ -44,5 +44,27 @@ class Helper
 
     return [ar_normal, vector]
   end
+
+
+  def self.in_sets(ar, x_rand)
+    training_set = []
+    testing_set = []
+
+    ar[0].each_with_index do |e, index|
+      vector = []
+      (0...ar.size).each do |i|
+        vector << ar[i][index]
+      end
+
+      if rand < x_rand
+        training_set << vector
+      else
+        testing_set << vector
+      end
+    end
+
+    return training_set, testing_set
+  end
+
 end
 
