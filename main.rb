@@ -49,7 +49,7 @@ vectors = []
 
 training_set.each do |vector|
   label = vector[0]
-  vector = vector[1..vector.size-1]
+  vector = vector[2..vector.size-1]
   labels << label
   vectors  << vector
 end
@@ -68,7 +68,7 @@ false_val = 0
 vectors = []
 testing_set.each do |vector|
   label = vector[0]
-  vector = vector[1..vector.size-1]
+  vector = vector[2..vector.size-1]
 
   pred = model.predict(Libsvm::Node.features(*vector))
 
