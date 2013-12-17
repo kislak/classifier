@@ -89,19 +89,44 @@ end
 agr_a = 0
 agr_b = 0
 
-eps = 0.00000001
+eps = 0.0001
+min = 1.1
 max = 1.2
-while eps < 100 do
-eps*=4
-c = 1
+
+while eps < 10 do
+  eps*=4
+  c = 0.01
 while c < 100 do
     c*=4
+    agr_a = agr_b = 0
     10.times do
       problem = Libsvm::Problem.new
+
+#:svm_type = Parameter::C_SVC, for the type of SVM
+#:kernel_type = Parameter::LINEAR, for the type of kernel
+#:cost = 1.0, for the cost or C parameter
+#:gamma = 0.0, for the gamma parameter in kernel
+#:degree = 1, for polynomial kernel
+#:coef0 = 0.0, for polynomial/sigmoid kernels
+#:eps = 0.001, for stopping criterion
+#:nr_weight = 0, for C_SVC
+#:nu = 0.5, used for NU_SVC, ONE_CLASS and NU_SVR. Nu must be in (0,1]
+#:p = 0.1, used for EPSILON_SVR
+#:shrinking = 1, use the shrinking heuristics
+#:probability = 0, use the probability estimates
+
+
       parameter = Libsvm::SvmParameter.new
+      #parameter.kernel_type = Libsvm::KernelType::LINEAR
+        #POLY = nil #value is unknown, used for indexing.
+        #RBF = nil #value is unknown, used for indexing.
+        #SIGMOID = nil #value is unknown, used for indexing.
+        #PRECOMPUTED = nil #value is unknown, used for indexing.
       parameter.cache_size = 10 # in megabytes
-      parameter.eps = 0.001
-      parameter.c = 10
+      parameter.eps = eps
+      parameter.c = c
+      #parameter.degree = degree
+      #parameter.coef0 = 0.1
 
 
       a,b,cc = test(problem, parameter, ar)
@@ -109,8 +134,20 @@ while c < 100 do
       agr_b = agr_b + b
     end
     res = agr_a*1.0/agr_b
+    if res < min
+      min = res
+      puts 'min'
+      puts eps
+      puts c
+      puts agr_a
+      puts agr_b
+      puts res
+      puts agr_a.to_f/(agr_a.to_f+agr_b)
+    end
+
     if res > max
       max = res
+      puts 'max'
       puts eps
       puts c
       puts agr_a
